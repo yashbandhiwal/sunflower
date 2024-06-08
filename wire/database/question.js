@@ -12,8 +12,8 @@ const QuestionSchema = new mongoose.Schema({
     },
     Mood: {
         type: String,
-        enum: ['Rad', 'Good', 'Meh' ,'Bad', 'Worst'],
-        default: 'Meh'
+        enum: ['Good', 'Meh', 'Bad', null],
+        default: null
     },
     createdAt: {
         type: Date,

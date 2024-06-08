@@ -3,8 +3,9 @@ const mongoose = require('mongoose');
 const moodActivitySchema = new mongoose.Schema({
 
     mood:{
-        type:String,
-        required: true
+        type: String,
+        enum: ['Good', 'Meh', 'Bad', null],
+        default: null
     },
     description: {
         type: String,
