@@ -37,13 +37,3 @@
  * @description : Get one mood
  * 
  */
-
-/**
- * 
- * @title : get one of mood
- * @params : id,userId
- * @route : GET /api/v1/track/mood/get
- * @access : Private
- * @description : Get one mood
- * 
- */
