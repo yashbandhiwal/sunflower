@@ -3,6 +3,7 @@ const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const User = require('../models/users');
 const { validationResult } = require('express-validator');
+const { ObjectId } = require('mongodb');
 
 /**
  * 
@@ -95,10 +96,70 @@ exports.login = asyncHandler(async(req,res,next) => {
  */
 exports.update = asyncHandler(async(req,res,next) => {
   
-  console.log(req.session);
+  let {
+    email,
+    phone_number,
+    name,
+    id
+  } = req.body
+
+  let emailExist = await User.findOne({
+    email:email
+  })
+  if(emailExist){
+    return next(new ErrorResponse('Email already exists', 401));
+  }
+
+  let phoneExist = await User.findOne({
+    phone_number:phone_number
+  })
+  if(phoneExist){
+    return next(new ErrorResponse('Phone already exists', 401));
+  }
+
+  let updateObj = {}
+
+  if(email){
+    updateObj = {
+      ...updateObj,
+      email:email,
+      verified_email:false
+    }
+  }
+  if(phone_number){
+    updateObj = {
+      ...updateObj,
+      phone_number,
+      verified_phone_number:false
+    }
+  }
+  if(name){
+    updateObj = {
+      ...updateObj,
+      name
+    }
+  }
+  
+
+  let userExist = await User.findById(id);
+  if(!userExist){
+    return next(new ErrorResponse('User not found', 404));
+  }
+
+  let userUpdate = await User.findByIdAndUpdate({
+      _id:new ObjectId(id)
+    },
+    {
+      $set:updateObj
+    },
+    {
+      returnDocument:"after"
+    }
+  )
 
   res.status(200).json({
-    success:true
+    success:true,
+    data:userUpdate
   })
 
 })
