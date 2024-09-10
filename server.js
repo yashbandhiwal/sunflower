@@ -13,8 +13,8 @@ const hpp = require('hpp');
 const cors = require('cors');
 const errorHandler = require('./middleware/error');
 const connectDB = require('./config/db');
-
-
+const session = require('express-session')
+const MongoDBStore = require('connect-mongodb-session')(session);
 
 // Load env vars
 dotenv.config({ path: './config/config.env' });
@@ -26,6 +26,19 @@ connectDB();
 const auth = require('./routes/auth');
 
 const app = express();
+
+const store = new MongoDBStore({
+  uri: process.env.MONGO_URI,
+  collection: 'sessions'
+});
+
+app.use(session({
+  secret: 'keyboard cat',
+  resave: false,
+  store:store,
+  saveUninitialized: true,
+  cookie: { secure: true }
+}))
 
 // Body parser
 app.use(express.json());
@@ -68,7 +81,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Mount routers
 app.use('/api/v1/user/auth', auth);
-
 
 app.use(errorHandler);
 

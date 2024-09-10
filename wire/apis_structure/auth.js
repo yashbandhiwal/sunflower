@@ -73,3 +73,13 @@
  * @description : resettoken validation then enter new password
  * 
  */
+
+/**
+ * 
+ * @title :login
+ * @params : 
+ * @route : GET /api/v1/user/login
+ * @access : Public
+ * @description : login and setting the session
+ * 
+ */

@@ -41,6 +41,69 @@ exports.create = asyncHandler(async(req,res,next) => {
     
 })
 
+
+/**
+ * 
+ * @title :login
+ * @params : 
+ * @route : GET /api/v1/user/login
+ * @access : Public
+ * @description : login and setting the session
+ * 
+ */
+exports.login = asyncHandler(async(req,res,next) => {
+  
+  const {
+    email,
+    password
+  } = req.body;
+
+  let userEmailExist = await User.findOne({email:email}).select('+password');
+  if(!userEmailExist){
+    return next(new ErrorResponse('Invalid credentials', 401));
+  }
+
+  let isMatch = await userEmailExist.matchPassword(password);
+  if(!isMatch){
+    return next(new ErrorResponse('Invalid credentials', 401));
+  }
+
+  req.session.isLoggedIn = true;
+  req.session.user = userEmailExist._id;
+  let err = await req.session.save()
+  console.log(err);
+  console.log(req.session);
+
+  res.status(200).json({
+    success:true,
+    data: userEmailExist,
+  })
+
+})
+
+/**
+ * 
+ * @title : Update user
+ * @params : name, email, phone_number,
+ * @route : PUT /api/v1/user/
+ * @access : Private
+ * @description :   - update email
+ *                  - update phone
+ *                  - update both
+ *                  - verification off and code resend
+ * 
+ */
+exports.update = asyncHandler(async(req,res,next) => {
+  
+  console.log(req.session);
+
+  res.status(200).json({
+    success:true
+  })
+
+})
+
+
 // Get token from model, create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {
     // Create token
